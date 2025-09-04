@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SimpleX — Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">⟁</div>
+      <div class="name">SimpleX</div>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn" data-view="dashboard">Dashboard</button>
+      <button class="nav-btn" data-view="markets">Markets</button>
+      <button class="nav-btn" data-view="trade">Trade</button>
+      <button class="nav-btn" data-view="wallet">Wallet</button>
+      <button class="nav-btn" data-view="profile">Profile</button>
+    </nav>
+    <div class="auth">
+      <button id="btn-login" class="secondary">Log in</button>
+      <button id="btn-signup" class="primary">Sign up</button>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">☰</button>
+  </header>
+
+  <main id="app">
+    <!-- DASHBOARD -->
+    <section class="view" id="view-dashboard">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Top Markets</h2>
+          <div class="muted">Live snapshot</div>
+        </div>
+        <div class="table-wrap">
+          <table id="table-top-markets">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Price</th>
+                <th>24h %</th>
+                <th>24h Vol</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- MARKETS -->
+    <section class="view" id="view-markets" hidden>
+      <div class="panel">
+        <div class="panel-header">
+          <h2>All Markets</h2>
+          <input type="search" id="search-markets" placeholder="Search pair…"/>
+        </div>
+        <div class="table-wrap">
+          <table id="table-markets">
+            <thead>
+              <tr>
+                <th>Pair</th>
+                <th>Price</th>
+                <th>24h %</th>
+                <th>24h Vol</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRADE -->
+    <section class="view" id="view-trade" hidden>
+      <div class="trade-grid">
+        <!-- Chart -->
+        <div class="panel chart-panel">
+          <div class="panel-header">
+            <h2 id="chart-title">BTC/USDT</h2>
+            <select id="chart-asset"></select>
+          </div>
+          <canvas id="price-chart" height="260"></canvas>
+        </div>
+
+        <!-- Buy / Sell -->
+        <div class="panel order-panel">
+          <div class="panel-header">
+            <h2>Order</h2>
+            <div class="segmented">
+              <button class="seg active" data-side="buy">Buy</button>
+              <button class="seg" data-side="sell">Sell</button>
+            </div>
+          </div>
+
+          <div class="order-form">
+            <div class="order-type">
+              <label><input type="radio" name="ordertype" value="market" checked/> Market</label>
+              <label><input type="radio" name="ordertype" value="limit"/> Limit</label>
+            </div>
+            <div id="limit-price-wrap" class="field" hidden>
+              <label>Limit Price</label>
+              <input type="number" id="input-limit-price" step="0.01" min="0"/>
+            </div>
+            <div class="field">
+              <label>Amount</label>
+              <input type="number" id="input-amount" step="0.0001" min="0"/>
+            </div>
+            <button id="btn-submit-order" class="primary wide">Place Order</button>
+            <div id="order-error" class="error" hidden></div>
+          </div>
+        </div>
+
+        <!-- Order Book -->
+        <div class="panel book-panel">
+          <div class="panel-header">
+            <h2>Order Book</h2>
+          </div>
+          <div class="orderbook">
+            <div>
+              <h4>Asks</h4>
+              <ul id="asks"></ul>
+            </div>
+            <div>
+              <h4>Bids</h4>
+              <ul id="bids"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trade History -->
+        <div class="panel history-panel">
+          <div class="panel-header">
+            <h2>Recent Trades</h2>
+          </div>
+          <div class="table-wrap small">
+            <table id="table-trades">
+              <thead>
+                <tr><th>Time</th><th>Price</th><th>Amount</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Open Orders & Fills -->
+        <div class="panel orders-panel">
+          <div class="panel-header">
+            <h2>My Orders</h2>
+          </div>
+          <div class="tabs">
+            <button class="tab active" data-tab="open">Open</button>
+            <button class="tab" data-tab="history">History</button>
+          </div>
+          <div class="table-wrap small">
+            <table id="table-open-orders">
+              <thead><tr><th>Time</th><th>Pair</th><th>Side</th><th>Type</th><th>Price</th><th>Amount</th><th>Action</th></tr></thead>
+              <tbody></tbody>
+            </table>
+            <table id="table-order-history" hidden>
+              <thead><tr><th>Time</th><th>Pair</th><th>Side</th><th>Type</th><th>Price</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WALLET -->
+    <section class="view" id="view-wallet" hidden>
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Wallet</h2>
+          <div class="muted" id="wallet-total"></div>
+        </div>
+        <div class="table-wrap">
+          <table id="table-wallet">
+            <thead><tr><th>Asset</th><th>Amount</th><th>Value (USDT)</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="view" id="view-profile" hidden>
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Profile & Security</h2>
+        </div>
+        <div class="profile">
+          <div class="field">
+            <label>Username</label>
+            <input id="profile-username" placeholder="guest" />
+          </div>
+          <div class="field inline">
+            <label>Two-Factor Auth</label>
+            <label class="switch">
+              <input type="checkbox" id="toggle-2fa"/>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <button id="btn-save-profile" class="primary">Save</button>
+        </div>
+        <div class="muted note">
+          This is a front‑end demo. Hook up real auth, KYC, deposits/withdrawals, and trading via your backend/API.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>© <span id="year"></span> SimpleX — Demo Exchange UI</div>
+    <div class="muted">For education/testing only</div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
